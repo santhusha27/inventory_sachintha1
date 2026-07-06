@@ -113,7 +113,7 @@ export function AppSidebar() {
 
         // Staff permissions
         if (roleId === 3) {
-            return ['Dashboard', 'Stock', 'Sales'].includes(item.title);
+            return ['Dashboard', 'Stock', 'Sales', 'Products'].includes(item.title);
         }
 
         return false;

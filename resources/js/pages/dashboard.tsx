@@ -95,9 +95,9 @@ export default function Dashboard() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
-            <div className="min-h-screen bg-black">
+            <div className="min-h-screen">
                 {/* HEADER */}
-                <div className="border-b border-orange-500 bg-black px-8 py-8">
+                <div className="border-b border-orange-500 px-8 py-8">
                     <h1 className="text-4xl font-bold text-orange-500">
                         Sachintha Book Shop
                     </h1>
