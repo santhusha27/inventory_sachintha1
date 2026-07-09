@@ -134,14 +134,7 @@ export default function SalesIndex() {
 
         router.post(
             '/sales',
-            {
-                items: items,
-            },
-            {
-                onSuccess: () => {
-                    handleClose();
-                },
-            },
+            {items: items,},{onSuccess: () => {handleClose();},},
         );
     };
 
