@@ -172,7 +172,7 @@ export default function SalesIndex() {
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full rounded-lg border text-sm">
-                        <thead className="bg-gray-100 dark:bg-neutral-800">
+                        <thead className="bg-orange-100 dark:bg-neutral-800">
                             <tr>
                                 <th className="px-4 py-2 text-left font-semibold">
                                     ID

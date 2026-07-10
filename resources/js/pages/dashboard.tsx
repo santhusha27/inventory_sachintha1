@@ -2,6 +2,7 @@ import { Card } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, usePage } from '@inertiajs/react';
+import Notifications from "@/components/notifications";
 
 import {
     AlertTriangle,
@@ -95,9 +96,23 @@ export default function Dashboard() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
-            <div className="min-h-screen">
+            <div className="min-h-screen bg-cover bg-center bg-fixed relative"
+            style={{
+            backgroundImage: "url('/images/book.png')",
+            }}
+>
+            {/* Dark Overlay */}
+            <div className="min-h-screen bg-black/65 backdrop-blur-[1px] relative">
+
+             <div className="pointer-events-none absolute inset-0 overflow-hidden">
+
+            <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-orange-500/20 blur-3xl"></div>
+
+            <div className="absolute bottom-0 right-0 h-[500px] w-[500px] rounded-full bg-orange-400/10 blur-3xl"></div>
+
+            </div>
                 {/* HEADER */}
-                <div className="border-b border-orange-500 px-8 py-8">
+                <div className="border-b border-orange-500/40 bg-black/30 px-8 py-8 backdrop-blur-md">
                     <h1 className="text-4xl font-bold text-orange-500">
                         Sachintha Book Shop
                     </h1>
@@ -105,6 +120,15 @@ export default function Dashboard() {
                     <p className="mt-2 text-gray-300">
                         Inventory Management Dashboard
                     </p>
+
+                    {/* Notification Icon */}
+
+                     <div className="ml-auto">
+
+                        <Notifications />
+
+                    </div>
+
 
                     {/* CARDS */}
                     <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3 xl:grid-cols-6">
@@ -115,7 +139,7 @@ export default function Dashboard() {
                                 <Card
                                     key={card.title}
                                     onClick={() => router.get(card.href)}
-                                    className="cursor-pointer border border-orange-500 bg-[#111111] p-5 transition-all hover:scale-105 hover:bg-[#1b1b1b]"
+                                    className="cursor-pointer border border-orange-500/40 bg-black/45 backdrop-blur-xl p-5 transition-all hover:scale-105 hover:bg-[#1b1b1b]"
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
@@ -145,7 +169,7 @@ export default function Dashboard() {
                 {/* BODY */}
                 <div className="grid grid-cols-1 gap-6 p-6 lg:grid-cols-4">
                     {/* LEFT PANEL */}
-                    <div className="rounded-xl border border-orange-500 bg-[#111111] p-8 text-white lg:col-span-1">
+                    <div className="rounded-xl border border-orange-500/40 bg-black/45 backdrop-blur-xl p-8 text-white lg:col-span-1">
                         <h2 className="text-2xl font-bold text-orange-500">
                             Stock Value
                         </h2>
@@ -188,7 +212,7 @@ export default function Dashboard() {
 
                     {/* CHART */}
                     <div className="lg:col-span-3">
-                        <Card className="h-full border border-orange-500 bg-[#111111] p-8">
+                        <Card className="h-full border border-orange-500/40 bg-black/45 p-8 backdrop-blur-xl shadow-xl">
                             <h2 className="mb-6 text-center text-3xl font-bold text-orange-500">
                                 Product Stock Levels
                             </h2>
@@ -219,6 +243,7 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+        </div>
         </AppLayout>
     );
 }

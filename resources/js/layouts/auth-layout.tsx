@@ -14,5 +14,7 @@ export default function AuthLayout({
         <AuthLayoutTemplate title={title} description={description} {...props}>
             {children}
         </AuthLayoutTemplate>
+        
     );
+    
 }

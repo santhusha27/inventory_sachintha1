@@ -13,6 +13,8 @@ import { type BreadcrumbItem } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
+
+
 interface Product {
     id: number;
     supplier_id: string;
@@ -46,12 +48,20 @@ const emptyForm = {
 type FormState = typeof emptyForm & { id?: number };
 
 export default function ProductIndex() {
-    const { products, categories, suppliers } = usePage<{
-        products: any[];
-        categories: any[];
-        suppliers: any[];
-    }>().props;
+   const { auth, products, categories, suppliers } = usePage<{
+    auth: {
+        user: {
+            role: {
+                role_name: string;
+            };
+        };
+    };
+    products: any[];
+    categories: any[];
+    suppliers: any[];
+}>().props;
     const productList = products ?? [];
+    
 
     const [open, setOpen] = useState(false);
     const [form, setForm] = useState<FormState>(emptyForm);
@@ -116,12 +126,17 @@ export default function ProductIndex() {
             <Card className="mt-6 p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Products</h1>
-                    <Button onClick={handleOpenAdd}>Add Product</Button>
+
+                        {auth.user.role.role_name !== "staff" && (
+                            <Button onClick={handleOpenAdd}>
+                                Add Product
+                            </Button>
+                             )}
                 </div>
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full rounded-lg border text-sm">
-                        <thead className="bg-gray-100 dark:bg-neutral-800">
+                        <thead className="bg-orange-100 dark:bg-neutral-800">
                             <tr>
                                 <th className="px-4 py-2 text-left font-semibold">
                                     Name
@@ -144,12 +159,16 @@ export default function ProductIndex() {
                                 <th className="px-4 py-2 text-left font-semibold">
                                     Reorder Rate
                                 </th>
+                                 {auth.user.role.role_name !== "staff" && (
+                                    <>
                                 <th className="px-4 py-2 text-left font-semibold">
                                     Description
                                 </th>
                                 <th className="px-4 py-2 text-left font-semibold">
                                     Action
                                 </th>
+                                </>
+                                )}
                             </tr>
                         </thead>
 
@@ -176,26 +195,32 @@ export default function ProductIndex() {
                                     <td className="px-4 py-2">
                                         {p.reorder_level}
                                     </td>
+                                    {auth.user.role.role_name !== "staff" && (
+                                        <>
                                     <td className="px-4 py-2">
                                         {p.description}
                                     </td>
 
                                     <td className="gap-2 px-4 py-2">
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => handleOpenEdit(p)}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            variant="destructive"
-                                            onClick={() => handleDelete(p.id)}
-                                        >
-                                            Delete
-                                        </Button>
+                                        
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => handleOpenEdit(p)}
+                                                >
+                                                    Edit
+                                                </Button>
+
+                                                <Button
+                                                    size="sm"
+                                                    variant="destructive"
+                                                    onClick={() => handleDelete(p.id)}
+                                                >
+                                                    Delete
+                                                </Button>
                                     </td>
+                                    </>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>

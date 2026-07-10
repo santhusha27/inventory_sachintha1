@@ -74,7 +74,7 @@ export default function Invoice() {
                 {/* ITEMS TABLE */}
                 <div className="overflow-x-auto text-gray-500">
                     <table className="min-w-full rounded-lg border text-sm">
-                        <thead className="bg-gray-100 dark:bg-neutral-800">
+                        <thead className="bg-orange-100 dark:bg-neutral-800">
                             <tr>
                                 <th className="px-4 py-2 text-left font-semibold">
                                     Product

@@ -25,6 +25,7 @@ import {
     UserRoundMinus,
     UsersRound,
     Warehouse,
+    BarChart3,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -74,20 +75,18 @@ const mainNavItems: NavItem[] = [
         href: '/roles',
         icon: UserRoundCog,
     },
+    {
+        title: "Reports",
+        href: "/reports",
+        icon: BarChart3,
+    }
 ];
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
+    
+   
 ];
+
 
 export function AppSidebar() {
     // 🔹 Get logged user
@@ -120,8 +119,8 @@ export function AppSidebar() {
     });
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+        <Sidebar collapsible="icon" variant="inset" className="">
+            <SidebarHeader className="bg-[#EFB261]">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
@@ -133,11 +132,10 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className="bg-[#EFB261]">
                 <NavMain items={filteredNavItems} />
             </SidebarContent>
-
-            <SidebarFooter>
+            <SidebarFooter className="bg-[#EFB261]">
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>

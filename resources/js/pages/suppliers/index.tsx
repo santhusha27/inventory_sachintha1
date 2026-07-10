@@ -93,7 +93,7 @@ export default function SupplierIndex(){
         <h1 className="text-2xl font-blod">Suppliers</h1><Button onClick={handleOpenAdd}>Add Supplier</Button></div>
       <div className="overflow-x-auto">
       <table className="min-w-full border text-sm rounded-lg">
-        <thead className="bg-gray-100 dark:bg-neutral-800">
+        <thead className="bg-orange-100 dark:bg-neutral-800">
           <tr>
             <th className="px-4 py-2 text-left font-semibold">ID</th>
             <th className="px-4 py-2 text-left font-semibold">Name</th>
