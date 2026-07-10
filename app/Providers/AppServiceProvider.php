@@ -38,5 +38,29 @@ class AppServiceProvider extends ServiceProvider
             ],
         ]);
 
+        Inertia::share([
+
+        'notifications' => function(){
+
+            if(auth()->check())
+            {
+
+                return auth()
+                    ->user()
+                    ->notifications()
+                    ->latest()
+                    ->take(10)
+                    ->get();
+
+            }
+
+
+            return [];
+
+        }
+
+    ]);
+
+
     }
 }
