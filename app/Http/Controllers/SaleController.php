@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Sale;
 use App\Models\Product;
 use App\Models\Stock;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Notifications\NewSaleNotification;
+use App\Notifications\LowStockAlertNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -27,6 +30,7 @@ class SaleController extends Controller
         ]);
     }
 
+
     public function store(Request $request)
     {
         $request->validate([
@@ -35,111 +39,309 @@ class SaleController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
         ]);
 
+
         try {
-            DB::transaction(function () use ($request) {
+
+            $sale = null;
+
+
+            DB::transaction(function () use ($request, &$sale) {
+
                 $grandTotal = 0;
 
+
                 $sale = Sale::create([
+
                     'user_id' => Auth::id(),
+
                     'total_amount' => 0,
+
                     'sale_date' => now(),
+
                 ]);
 
-                foreach ($request->items as $item) {
-                    $product = Product::findOrFail($item['product_id']);
 
-                    $stock = Stock::where('product_id', $product->id)
-                        ->lockForUpdate()
-                        ->first();
+
+                foreach ($request->items as $item) {
+
+
+                    $product = Product::findOrFail(
+                        $item['product_id']
+                    );
+
+
+
+                    $stock = Stock::where(
+                        'product_id',
+                        $product->id
+                    )
+                    ->lockForUpdate()
+                    ->first();
+
+
 
                     if (!$stock || $stock->quantity <= 0) {
+
                         throw new \Exception(
-                            'Cannot do sale. Stock is zero for product: ' . $product->name
+                            'Cannot do sale. Stock is zero for product: '
+                            .$product->name
                         );
+
                     }
 
+
+
                     if ($stock->quantity < $item['quantity']) {
+
                         throw new \Exception(
-                            'Not enough stock for product: ' . $product->name .
-                            '. Available stock: ' . $stock->quantity
+                            'Not enough stock for product: '
+                            .$product->name
                         );
+
                     }
+
+
 
                     $unitPrice = $product->unit_price ?? 0;
 
-                    if ($unitPrice <= 0) {
-                        throw new \Exception(
-                            'Price not set for product: ' . $product->name
-                        );
-                    }
 
-                    $lineTotal = $unitPrice * $item['quantity'];
+
+                    $lineTotal =
+                        $unitPrice * $item['quantity'];
+
+
+
                     $grandTotal += $lineTotal;
 
+
+
+                    // Create sale item
+
                     $sale->items()->create([
+
                         'product_id' => $product->id,
+
                         'quantity' => $item['quantity'],
+
                         'unit_price' => $unitPrice,
+
                         'total_price' => $lineTotal,
+
                     ]);
 
-                    $stock->decrement('quantity', $item['quantity']);
+
+
+
+                    // Reduce stock
+
+                    $stock->decrement(
+                        'quantity',
+                        $item['quantity']
+                    );
+
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Low Stock Notification
+                    |--------------------------------------------------------------------------
+                    */
+
+
+                    $stock->refresh();
+
+
+
+                    if(
+                        $stock->quantity <=
+                        $product->reorder_level
+                    )
+                    {
+
+
+                        $admins = User::where(
+                            'role_id',
+                            1
+                        )->get();
+
+
+
+                        foreach($admins as $admin)
+                        {
+
+                            $admin->notify(
+
+                                new LowStockAlertNotification(
+                                    $product
+                                )
+
+                            );
+
+                        }
+
+                    }
+
+
+
                 }
 
+
+
                 $sale->update([
+
                     'total_amount' => $grandTotal,
+
                 ]);
+
+
             });
 
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | New Sale Notification
+            |--------------------------------------------------------------------------
+            */
+
+
+            $admins = User::where(
+                'role_id',
+                1
+            )->get();
+
+
+
+            foreach($admins as $admin)
+            {
+
+                $admin->notify(
+
+                    new NewSaleNotification($sale)
+
+                );
+
+            }
+
+
+
             return redirect()
                 ->route('sales.index')
-                ->with('success', 'Sale completed successfully.');
+                ->with(
+                    'success',
+                    'Sale completed successfully.'
+                );
+
+
 
         } catch (\Exception $e) {
+
+
             return redirect()
                 ->route('sales.index')
-                ->with('error', $e->getMessage());
+                ->with(
+                    'error',
+                    $e->getMessage()
+                );
+
         }
+
     }
+
+
+
+
 
     public function invoice($id)
     {
-        $sale = Sale::with(['items.product', 'user'])->findOrFail($id);
+        $sale = Sale::with([
+            'items.product',
+            'user'
+        ])->findOrFail($id);
+
 
         return Inertia::render('sales/invoice', [
             'sale' => $sale,
         ]);
     }
 
+
+
+
+
     public function invoicePdf($id)
     {
-        $sale = Sale::with(['items.product', 'user'])->findOrFail($id);
+        $sale = Sale::with([
+            'items.product',
+            'user'
+        ])->findOrFail($id);
 
-        $pdf = Pdf::loadView('pdf.sales-invoice', [
-            'sale' => $sale
-        ]);
 
-        return $pdf->stream('invoice-' . $sale->id . '.pdf');
+        $pdf = Pdf::loadView(
+            'pdf.sales-invoice',
+            [
+                'sale'=>$sale
+            ]
+        );
+
+
+        return $pdf->stream(
+            'invoice-'.$sale->id.'.pdf'
+        );
     }
+
+
+
+
 
     public function destroy($id)
     {
-        $sale = Sale::with('items')->findOrFail($id);
+
+        $sale = Sale::with('items')
+            ->findOrFail($id);
+
+
 
         DB::transaction(function () use ($sale) {
-            foreach ($sale->items as $item) {
-                $stock = Stock::where('product_id', $item->product_id)->first();
 
-                if ($stock) {
-                    $stock->increment('quantity', $item->quantity);
+
+            foreach($sale->items as $item)
+            {
+
+                $stock = Stock::where(
+                    'product_id',
+                    $item->product_id
+                )->first();
+
+
+
+                if($stock)
+                {
+
+                    $stock->increment(
+                        'quantity',
+                        $item->quantity
+                    );
+
                 }
+
             }
 
+
+
             $sale->delete();
+
+
         });
+
+
 
         return redirect()
             ->route('sales.index')
-            ->with('success', 'Sale deleted and stock restored.');
+            ->with(
+                'success',
+                'Sale deleted and stock restored.'
+            );
+
     }
 }
