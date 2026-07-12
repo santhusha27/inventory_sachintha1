@@ -24,12 +24,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Inertia::share([
-        'stats' => [
-            'products' => Product::count(),
-            'lowStock' => Stock::whereColumn('quantity', '<=', 'reorder_level')->count(),
-            'sales' => Sale::sum('total_amount'),
-        ]
-     ]);
+            'stats' => fn () => [
+                'products' => Product::count(),
+                'lowStock' => Stock::whereColumn('quantity', '<=', 'reorder_level')->count(),
+                'sales' => Sale::sum('total_amount'),
+            ]
+        ]);
 
         Inertia::share([
             'auth' => fn () => [
