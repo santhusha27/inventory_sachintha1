@@ -12,6 +12,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import InputError from '@/components/input-error';
 
 interface User {
     id: number;
@@ -37,7 +38,7 @@ const emptyForm = { name: '', email: '', phone: '', password: '', role_id: '' };
 type FormState = typeof emptyForm & { id?: number };
 
 export default function UserIndex() {
-    const { users, roles } = usePage<{ users: any[]; roles: any[] }>().props;
+    const { users, roles, errors = {} } = usePage<{ users: any[]; roles: any[]; errors: Record<string, string> }>().props;
     const userList = users ?? [];
 
     const [open, setOpen] = useState(false);
@@ -56,7 +57,7 @@ export default function UserIndex() {
             name: user.name,
             email: user.email,
             phone: user.phone,
-            password: user.password,
+            password: '',
             role_id: user.role_id,
         });
         setIsEdit(true);
@@ -179,6 +180,7 @@ export default function UserIndex() {
                                 onChange={handleChange}
                                 required
                             ></Input>
+                            <InputError message={errors.name} className="mt-1" />
                         </div>
                         <div>
                             <Label htmlFor="email">Email</Label>
@@ -189,6 +191,7 @@ export default function UserIndex() {
                                 onChange={handleChange}
                                 required
                             ></Input>
+                            <InputError message={errors.email} className="mt-1" />
                         </div>
                         <div>
                             <Label htmlFor="phone">Phone No</Label>
@@ -199,6 +202,7 @@ export default function UserIndex() {
                                 onChange={handleChange}
                                 required
                             ></Input>
+                            <InputError message={errors.phone} className="mt-1" />
                         </div>
                         <div>
                             <Label htmlFor="password">Password</Label>
@@ -207,8 +211,9 @@ export default function UserIndex() {
                                 name="password"
                                 value={form.password}
                                 onChange={handleChange}
-                                required
+                                required={!isEdit}
                             ></Input>
+                            <InputError message={errors.password} className="mt-1" />
                         </div>
                         <div>
                             <Label htmlFor="role_id">Role</Label>
@@ -227,6 +232,7 @@ export default function UserIndex() {
                                     </option>
                                 ))}
                             </select>
+                            <InputError message={errors.role_id} className="mt-1" />
                         </div>
                         <div className="justify-end-gap-2 flex">
                             <Button type="button" onClick={handleClose}>
