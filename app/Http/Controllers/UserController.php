@@ -80,14 +80,33 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-       $user = User::findOrFail($id);
+        $user = User::findOrFail($id);
 
-        $user->update([
+        $rules = [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'phone' => 'required',
+            'role_id' => 'required',
+        ];
+
+        if ($request->filled('password')) {
+            $rules['password'] = 'min:4';
+        }
+
+        $validated = $request->validate($rules);
+
+        $updateData = [
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            
-        ]);
+            'role_id' => $request->role_id,
+        ];
+
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        $user->update($updateData);
 
         return redirect()->back()->with('success', 'User Updated');
     }

@@ -102,9 +102,14 @@ class SaleController extends Controller
 
 
 
-                    $unitPrice = $product->unit_price ?? 0;
+                    if (!$product->unit_price || $product->unit_price <= 0) {
+                        throw new \Exception(
+                            'Cannot do sale. Unit price is not set for product: '
+                            .$product->name
+                        );
+                    }
 
-
+                    $unitPrice = $product->unit_price;
 
                     $lineTotal =
                         $unitPrice * $item['quantity'];
