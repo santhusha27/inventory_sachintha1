@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Role;
+
 test('registration screen can be rendered', function () {
     $response = $this->get(route('register'));
 
@@ -7,9 +9,13 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register', function () {
+    // Seed default role required by CreateNewUser action
+    Role::create(['role_name' => 'staff', 'description' => 'Staff member']);
+
     $response = $this->post(route('register.store'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
+        'phone' => '1234567890',
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);

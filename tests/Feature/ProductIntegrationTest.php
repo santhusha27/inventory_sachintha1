@@ -27,15 +27,15 @@ test('guests are redirected from product routes', function () {
     $this->get(route('products.index'))->assertRedirect(route('login'));
 });
 
-test('staff users cannot access product management', function () {
+test('staff users can view products but cannot access product creation', function () {
     $staff = User::factory()->create(['role_id' => $this->staffRole->id]);
 
     $this->actingAs($staff);
 
-    // Try to view products
-    $this->get(route('products.index'))->assertStatus(403);
+    // Can view products
+    $this->get(route('products.index'))->assertOk();
 
-    // Try to create product
+    // Cannot create product
     $this->post(route('products.store'), [])->assertStatus(403);
 });
 

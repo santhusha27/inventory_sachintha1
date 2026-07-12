@@ -19,7 +19,7 @@ test('user has a role and hasRole helper works', function () {
         'password' => bcrypt('password'),
         'role_id' => $role->id,
         'phone' => '123456789',
-        'status' => 'active'
+        'status' => true
     ]);
 
     expect($user->role->role_name)->toBe('admin');
