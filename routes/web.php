@@ -86,8 +86,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
     // Products
-    Route::middleware('role:admin,storekeeper,staff')->group(function () {
-        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products', [ProductController::class, 'index'])
+        ->middleware('role:admin,storekeeper,staff')
+        ->name('products.index');
+
+    Route::middleware('role:admin,storekeeper')->group(function () {
         Route::post('/products', [ProductController::class, 'store'])->name('products.store');
         Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
