@@ -15,8 +15,7 @@ import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
     BadgeDollarSign,
-    BookOpen,
-    Folder,
+    BarChart3,
     LayoutGrid,
     NotepadText,
     PackageSearch,
@@ -25,7 +24,6 @@ import {
     UserRoundMinus,
     UsersRound,
     Warehouse,
-    BarChart3,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -76,17 +74,13 @@ const mainNavItems: NavItem[] = [
         icon: UserRoundCog,
     },
     {
-        title: "Reports",
-        href: "/reports",
+        title: 'Reports',
+        href: '/reports',
         icon: BarChart3,
-    }
+    },
 ];
 
-const footerNavItems: NavItem[] = [
-    
-   
-];
-
+const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
     // 🔹 Get logged user
@@ -112,7 +106,9 @@ export function AppSidebar() {
 
         // Staff permissions
         if (roleId === 3) {
-            return ['Dashboard', 'Stock', 'Sales', 'Products'].includes(item.title);
+            return ['Dashboard', 'Stock', 'Sales', 'Products'].includes(
+                item.title,
+            );
         }
 
         return false;

@@ -273,7 +273,7 @@ export default function PurchaseIndex() {
             </Card>
 
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent>
+                <DialogContent className="max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Add Purchase</DialogTitle>
                     </DialogHeader>
@@ -282,7 +282,9 @@ export default function PurchaseIndex() {
                         {/* SUPPLIER */}
 
                         <div>
-                            <Label>Supplier</Label>
+                            <Label>
+                                Supplier<span className="text-red-500">*</span>
+                            </Label>
 
                             <select
                                 value={supplierId}
@@ -311,7 +313,10 @@ export default function PurchaseIndex() {
                                 className="space-y-4 rounded-lg border p-4"
                             >
                                 <div>
-                                    <Label>Product</Label>
+                                    <Label>
+                                        Product
+                                        <span className="text-red-500">*</span>
+                                    </Label>
 
                                     <select
                                         name="product_id"
@@ -342,7 +347,10 @@ export default function PurchaseIndex() {
                                 </div>
 
                                 <div>
-                                    <Label>Quantity</Label>
+                                    <Label>
+                                        Quantity
+                                        <span className="text-red-500">*</span>
+                                    </Label>
 
                                     <Input
                                         type="number"

@@ -27,7 +27,9 @@ export default function Register() {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name" className="text-black">
+                                    Name<span className="text-red-500">*</span>
+                                </Label>
                                 <Input
                                     id="name"
                                     type="text"
@@ -45,7 +47,10 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email" className="text-black">
+                                    Email address
+                                    <span className="text-red-500">*</span>
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -57,12 +62,13 @@ export default function Register() {
                                 />
                                 <InputError message={errors.email} />
                             </div>
-                             <div className="grid gap-2">
-                                <Label htmlFor="phone">phone number</Label>
+                            <div className="grid gap-2">
+                                <Label htmlFor="phone" className="text-black">
+                                    Phone number
+                                </Label>
                                 <Input
                                     id="phone"
                                     type="phone"
-                                    required
                                     tabIndex={2}
                                     autoComplete="phone"
                                     name="phone"
@@ -72,7 +78,13 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
+                                <Label
+                                    htmlFor="password"
+                                    className="text-black"
+                                >
+                                    Password
+                                    <span className="text-red-500">*</span>
+                                </Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -86,8 +98,12 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
+                                <Label
+                                    htmlFor="password_confirmation"
+                                    className="text-black"
+                                >
                                     Confirm password
+                                    <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     id="password_confirmation"
@@ -116,7 +132,11 @@ export default function Register() {
 
                         <div className="text-center text-sm text-muted-foreground">
                             Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
+                            <TextLink
+                                href={login()}
+                                tabIndex={6}
+                                className="text-black"
+                            >
                                 Log in
                             </TextLink>
                         </div>

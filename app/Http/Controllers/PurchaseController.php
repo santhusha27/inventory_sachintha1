@@ -41,11 +41,8 @@ class PurchaseController extends Controller
         $request->validate([
 
             'supplier_id' => 'required|exists:suppliers,id',
-
             'items' => 'required|array|min:1',
-
             'items.*.product_id' => 'required|exists:products,id',
-
             'items.*.quantity' => 'required|integer|min:1',
         ]);
 
@@ -54,83 +51,48 @@ class PurchaseController extends Controller
             DB::transaction(function () use ($request) {
 
                 $grandTotal = 0;
-
                 $purchase = Purchase::create([
-
                     'supplier_id' => $request->supplier_id,
-
                     'user_id' => Auth::id(),
-
-                    'grn_number' =>
-                        'GRN-' . now()->format('YmdHis'),
-
+                    'grn_number' =>'GRN-' . now()->format('YmdHis'),
                     'total_amount' => 0,
-
                     'purchase_date' => now(),
                 ]);
 
                 foreach ($request->items as $item) {
 
-                    $product = Product::findOrFail(
-                        $item['product_id']
-                    );
+                    $product = Product::findOrFail($item['product_id']);
 
                     // CHECK PRODUCT BELONGS TO SUPPLIER
                     if (
-                        (int) $product->supplier_id !==
-                        (int) $request->supplier_id
-                    ) {
-
-                        throw new \Exception(
-                            'Selected product does not belong to selected supplier.'
-                        );
-                    }
+                        (int) $product->supplier_id !== (int) $request->supplier_id)
+                        {throw new \Exception('Selected product does not belong to selected supplier.');}
 
                     // UNIT PRICE FROM PRODUCT COST PRICE
                     $unitPrice = $product->cost_price;
-
-                    $lineTotal =
-                        $item['quantity'] * $unitPrice;
-
+                    $lineTotal = $item['quantity'] * $unitPrice;
                     $grandTotal += $lineTotal;
-
                     $purchase->items()->create([
 
                         'product_id' => $product->id,
-
                         'quantity' => $item['quantity'],
-
                         'unit_price' => $unitPrice,
-
                         'total_price' => $lineTotal,
                     ]);
 
                     // STOCK UPDATE
                     $stock = Stock::firstOrCreate(
                         ['product_id' => $product->id],
-                        [
-                            'quantity' => 0,
-                            'reorder_level' => 10,
-                        ]
+                        ['quantity' => 0,'reorder_level' => 10,]
                     );
 
-                    $stock->increment(
-                        'quantity',
-                        $item['quantity']
-                    );
+                    $stock->increment('quantity',$item['quantity']);
                 }
 
-                $purchase->update([
-                    'total_amount' => $grandTotal,
-                ]);
+                $purchase->update(['total_amount' => $grandTotal,]);
             });
 
-            return redirect()
-                ->route('purchases.index')
-                ->with(
-                    'success',
-                    'Purchase created successfully.'
-                );
+            return redirect()->route('purchases.index')->with('success','Purchase created successfully.');
 
         } catch (\Exception $e) {
 

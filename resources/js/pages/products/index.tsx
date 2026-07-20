@@ -10,10 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { router, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
-
-
 
 interface Product {
     id: number;
@@ -48,20 +46,19 @@ const emptyForm = {
 type FormState = typeof emptyForm & { id?: number };
 
 export default function ProductIndex() {
-   const { auth, products, categories, suppliers } = usePage<{
-    auth: {
-        user: {
-            role: {
-                role_name: string;
+    const { auth, products, categories, suppliers } = usePage<{
+        auth: {
+            user: {
+                role: {
+                    role_name: string;
+                };
             };
         };
-    };
-    products: any[];
-    categories: any[];
-    suppliers: any[];
-}>().props;
+        products: any[];
+        categories: any[];
+        suppliers: any[];
+    }>().props;
     const productList = products ?? [];
-    
 
     const [open, setOpen] = useState(false);
     const [form, setForm] = useState<FormState>(emptyForm);
@@ -123,15 +120,14 @@ export default function ProductIndex() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Products" />
             <Card className="mt-6 p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Products</h1>
 
-                        {auth.user.role.role_name !== "staff" && (
-                            <Button onClick={handleOpenAdd}>
-                                Add Product
-                            </Button>
-                             )}
+                    {auth.user.role.role_name !== 'staff' && (
+                        <Button onClick={handleOpenAdd}>Add Product</Button>
+                    )}
                 </div>
 
                 <div className="overflow-x-auto">
@@ -159,15 +155,15 @@ export default function ProductIndex() {
                                 <th className="px-4 py-2 text-left font-semibold">
                                     Reorder Rate
                                 </th>
-                                 {auth.user.role.role_name !== "staff" && (
+                                {auth.user.role.role_name !== 'staff' && (
                                     <>
-                                <th className="px-4 py-2 text-left font-semibold">
-                                    Description
-                                </th>
-                                <th className="px-4 py-2 text-left font-semibold">
-                                    Action
-                                </th>
-                                </>
+                                        <th className="px-4 py-2 text-left font-semibold">
+                                            Description
+                                        </th>
+                                        <th className="px-4 py-2 text-left font-semibold">
+                                            Action
+                                        </th>
+                                    </>
                                 )}
                             </tr>
                         </thead>
@@ -195,18 +191,19 @@ export default function ProductIndex() {
                                     <td className="px-4 py-2">
                                         {p.reorder_level}
                                     </td>
-                                    {auth.user.role.role_name !== "staff" && (
+                                    {auth.user.role.role_name !== 'staff' && (
                                         <>
-                                    <td className="px-4 py-2">
-                                        {p.description}
-                                    </td>
+                                            <td className="px-4 py-2">
+                                                {p.description}
+                                            </td>
 
-                                    <td className="gap-2 px-4 py-2">
-                                        
+                                            <td className="gap-2 px-4 py-2">
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
-                                                    onClick={() => handleOpenEdit(p)}
+                                                    onClick={() =>
+                                                        handleOpenEdit(p)
+                                                    }
                                                 >
                                                     Edit
                                                 </Button>
@@ -214,12 +211,14 @@ export default function ProductIndex() {
                                                 <Button
                                                     size="sm"
                                                     variant="destructive"
-                                                    onClick={() => handleDelete(p.id)}
+                                                    onClick={() =>
+                                                        handleDelete(p.id)
+                                                    }
                                                 >
                                                     Delete
                                                 </Button>
-                                    </td>
-                                    </>
+                                            </td>
+                                        </>
                                     )}
                                 </tr>
                             ))}
@@ -230,7 +229,7 @@ export default function ProductIndex() {
 
             {/* POPUP FORM */}
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent>
+                <DialogContent className="max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>
                             {isEdit ? 'Update Product' : 'Add Product'}
@@ -239,7 +238,9 @@ export default function ProductIndex() {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <Label>Supplier</Label>
+                            <Label>
+                                Supplier<span className="text-red-500">*</span>
+                            </Label>
                             <select
                                 name="supplier_id"
                                 value={form.supplier_id}
@@ -257,7 +258,9 @@ export default function ProductIndex() {
                         </div>
 
                         <div>
-                            <Label>Name</Label>
+                            <Label>
+                                Name<span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 name="name"
                                 value={form.name}
@@ -267,7 +270,9 @@ export default function ProductIndex() {
                         </div>
 
                         <div>
-                            <Label>SKU</Label>
+                            <Label>
+                                SKU<span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 name="sku"
                                 value={form.sku}
@@ -277,7 +282,9 @@ export default function ProductIndex() {
                         </div>
 
                         <div>
-                            <Label>Category</Label>
+                            <Label>
+                                Category<span className="text-red-500">*</span>
+                            </Label>
                             <select
                                 name="category_id"
                                 value={form.category_id}
@@ -295,7 +302,10 @@ export default function ProductIndex() {
                         </div>
 
                         <div>
-                            <Label>Cost Price</Label>
+                            <Label>
+                                Cost Price
+                                <span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 name="cost_price"
                                 value={form.cost_price}
@@ -305,7 +315,10 @@ export default function ProductIndex() {
                         </div>
 
                         <div>
-                            <Label>Unit Price</Label>
+                            <Label>
+                                Unit Price
+                                <span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 name="unit_price"
                                 value={form.unit_price}
@@ -315,7 +328,10 @@ export default function ProductIndex() {
                         </div>
 
                         <div>
-                            <Label>Reorder Level</Label>
+                            <Label>
+                                Reorder Level
+                                <span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 name="reorder_level"
                                 value={form.reorder_level}

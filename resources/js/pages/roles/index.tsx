@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 interface Role {
     id: number;
@@ -21,6 +21,7 @@ export default function RoleIndex() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Roles" />
             <Card className="mt-6 p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Roles</h1>

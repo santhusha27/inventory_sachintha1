@@ -43,7 +43,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'phone' => 'required',
+            'phone' => 'nullable',
             'password' => 'required|min:4',
             'role_id' => 'required',
         ]);
@@ -85,7 +85,7 @@ class UserController extends Controller
         $rules = [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
-            'phone' => 'required',
+            'phone' => 'nullable',
             'role_id' => 'required',
         ];
 

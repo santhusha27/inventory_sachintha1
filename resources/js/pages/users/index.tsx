@@ -1,3 +1,4 @@
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -10,9 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { router, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
-import InputError from '@/components/input-error';
 
 interface User {
     id: number;
@@ -38,7 +38,15 @@ const emptyForm = { name: '', email: '', phone: '', password: '', role_id: '' };
 type FormState = typeof emptyForm & { id?: number };
 
 export default function UserIndex() {
-    const { users, roles, errors = {} } = usePage<{ users: any[]; roles: any[]; errors: Record<string, string> }>().props;
+    const {
+        users,
+        roles,
+        errors = {},
+    } = usePage<{
+        users: any[];
+        roles: any[];
+        errors: Record<string, string>;
+    }>().props;
     const userList = users ?? [];
 
     const [open, setOpen] = useState(false);
@@ -97,6 +105,7 @@ export default function UserIndex() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Users" />
             <Card className="mt-6 p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="font-blod text-2xl">Users</h1>
@@ -172,7 +181,9 @@ export default function UserIndex() {
                     </DialogHeader>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <Label htmlFor="name">Name</Label>
+                            <Label htmlFor="name">
+                                Name<span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 id="name"
                                 name="name"
@@ -180,10 +191,15 @@ export default function UserIndex() {
                                 onChange={handleChange}
                                 required
                             ></Input>
-                            <InputError message={errors.name} className="mt-1" />
+                            <InputError
+                                message={errors.name}
+                                className="mt-1"
+                            />
                         </div>
                         <div>
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">
+                                Email<span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 id="email"
                                 name="email"
@@ -191,7 +207,10 @@ export default function UserIndex() {
                                 onChange={handleChange}
                                 required
                             ></Input>
-                            <InputError message={errors.email} className="mt-1" />
+                            <InputError
+                                message={errors.email}
+                                className="mt-1"
+                            />
                         </div>
                         <div>
                             <Label htmlFor="phone">Phone No</Label>
@@ -200,12 +219,16 @@ export default function UserIndex() {
                                 name="phone"
                                 value={form.phone}
                                 onChange={handleChange}
-                                required
                             ></Input>
-                            <InputError message={errors.phone} className="mt-1" />
+                            <InputError
+                                message={errors.phone}
+                                className="mt-1"
+                            />
                         </div>
                         <div>
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">
+                                Password<span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 id="password"
                                 name="password"
@@ -213,10 +236,15 @@ export default function UserIndex() {
                                 onChange={handleChange}
                                 required={!isEdit}
                             ></Input>
-                            <InputError message={errors.password} className="mt-1" />
+                            <InputError
+                                message={errors.password}
+                                className="mt-1"
+                            />
                         </div>
                         <div>
-                            <Label htmlFor="role_id">Role</Label>
+                            <Label htmlFor="role_id">
+                                Role<span className="text-red-500">*</span>
+                            </Label>
                             <select
                                 id="role_id"
                                 name="role_id"
@@ -232,7 +260,10 @@ export default function UserIndex() {
                                     </option>
                                 ))}
                             </select>
-                            <InputError message={errors.role_id} className="mt-1" />
+                            <InputError
+                                message={errors.role_id}
+                                className="mt-1"
+                            />
                         </div>
                         <div className="justify-end-gap-2 flex">
                             <Button type="button" onClick={handleClose}>

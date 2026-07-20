@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { router, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 interface Category {
@@ -83,6 +83,7 @@ export default function CategoryIndex() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Categories" />
             <Card className="mt-6 p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Categories</h1>

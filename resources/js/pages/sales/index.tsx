@@ -101,29 +101,30 @@ export default function SalesIndex() {
         const updatedItems = items.filter((_, i) => i !== index);
         setItems(updatedItems);
     };
-
+    // Handle sale form submission
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         for (const item of items) {
+            // Find the selected product from the product list using product ID
             const selectedProduct = productList.find(
                 (product) => product.id === Number(item.product_id),
             );
-
+            // Check whether a product has been selected
             if (!selectedProduct) {
                 window.alert('Please select a product.');
                 return;
             }
 
             const availableStock = selectedProduct.stock?.quantity ?? 0;
-
+            // Prevent sale if product stock is zero
             if (availableStock <= 0) {
                 window.alert(
                     `Cannot do sale. Stock is zero for product: ${selectedProduct.name}`,
                 );
                 return;
             }
-
+            // Check whether requested sale quantity exceeds available stock
             if (Number(item.quantity) > availableStock) {
                 window.alert(
                     `Not enough stock for product: ${selectedProduct.name}. Available stock: ${availableStock}`,
@@ -131,10 +132,15 @@ export default function SalesIndex() {
                 return;
             }
         }
-
+        // Send validated sale data to Laravel backend using Inertia POST request
         router.post(
             '/sales',
-            {items: items,},{onSuccess: () => {handleClose();},},
+            { items: items },
+            {
+                onSuccess: () => {
+                    handleClose();
+                },
+            },
         );
     };
 
@@ -250,7 +256,7 @@ export default function SalesIndex() {
             </Card>
 
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent>
+                <DialogContent className="max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Add Sale</DialogTitle>
                     </DialogHeader>
@@ -264,6 +270,7 @@ export default function SalesIndex() {
                                 <div>
                                     <Label htmlFor={`product_id_${index}`}>
                                         Product
+                                        <span className="text-red-500">*</span>
                                     </Label>
                                     <select
                                         id={`product_id_${index}`}
@@ -289,6 +296,7 @@ export default function SalesIndex() {
                                 <div>
                                     <Label htmlFor={`quantity_${index}`}>
                                         Quantity
+                                        <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
                                         id={`quantity_${index}`}

@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 interface Stock {
     id: number;
@@ -24,6 +24,7 @@ export default function StockIndex() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Stocks" />
             <Card className="mt-6 p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Stocks</h1>
@@ -51,14 +52,17 @@ export default function StockIndex() {
                                 let status = 'OK';
                                 let color = 'text-green-700 bg-green-100';
                                 let icon = '✔';
-
+                                // Default status when stock quantity is above the reorder level
                                 if (s.quantity === s.reorder_level) {
+                                    // Product has reached the minimum stock level
                                     status = 'Ready to Order';
                                     color = 'text-yellow-700 bg-yellow-100';
                                     icon = '⚠';
                                 }
 
                                 if (s.quantity < s.reorder_level) {
+                                    // Product quantity is below the minimum required level
+                                    // The system identifies that the product needs restocking
                                     status = 'Reorder Needed';
                                     color = 'text-red-700 bg-red-100';
                                     icon = '🔴';

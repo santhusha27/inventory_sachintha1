@@ -13,7 +13,9 @@ use App\Models\Product;
 use App\Models\Stock;
 use App\Models\Supplier;
 use App\Models\Purchase;
+use App\Models\Category;
 use App\Models\Sale;
+use App\Models\SaleItem;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -29,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         $totalProducts = Product::count();
         $totalSuppliers = Supplier::count();
+        $totalcategories = Category::count();
 
         $lowStock = Stock::whereColumn('quantity', '<=', 'reorder_level')->count();
         $outOfStock = Stock::where('quantity', '<=', 0)->count();
@@ -38,8 +41,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         $totalPurchases = Purchase::count();
+        $totalSpent = Purchase::sum('total_amount');
         $totalSales = Sale::count();
         $totalIncome = Sale::sum('total_amount');
+        $recentSale = Sale::with('user')
+            ->latest()
+            ->first();
+
+        $bestSellingCategory = SaleItem::select('categories.id', 'categories.name')
+            ->selectRaw('SUM(sale_items.quantity) as total_quantity')
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->groupBy('categories.id', 'categories.name')
+            ->orderByDesc('total_quantity')
+            ->first();
 
         $chartStocks = Stock::with('product')
             ->orderBy('quantity', 'desc')
@@ -62,8 +77,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'totalPurchases' => $totalPurchases,
                 'totalSales' => $totalSales,
                 'totalIncome' => $totalIncome,
+                'totalSpent' => $totalSpent,
+                'totalcategories' => $totalcategories,
             ],
             'chartStocks' => $chartStocks,
+            'recentSale' => $recentSale,
+            'bestSellingCategory' => $bestSellingCategory,
         ]);
     })->name('dashboard');
    
@@ -124,15 +143,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
     
 
-   
-   
-
         // Main Reports Page
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         // Custom Date Sales Report
         Route::get('/reports/custom', [ReportController::class, 'custom'])->name('reports.custom');
 
+        Route::delete('/notifications/{id}', function ($id) {
 
+                auth()->user()
+                    ->notifications()
+                    ->where('id', $id)
+                    ->delete();
+
+                return response()->json([
+                    'success' => true
+                ]);
+
+            })->middleware('auth');
 
 });
 

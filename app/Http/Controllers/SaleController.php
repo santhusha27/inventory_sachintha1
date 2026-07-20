@@ -49,100 +49,48 @@ class SaleController extends Controller
 
                 $grandTotal = 0;
 
-
                 $sale = Sale::create([
-
                     'user_id' => Auth::id(),
-
                     'total_amount' => 0,
-
                     'sale_date' => now(),
-
                 ]);
 
-
-
                 foreach ($request->items as $item) {
-
-
-                    $product = Product::findOrFail(
-                        $item['product_id']
-                    );
-
-
-
-                    $stock = Stock::where(
-                        'product_id',
-                        $product->id
-                    )
+                    // Retrieve the selected product details using the product ID
+                    $product = Product::findOrFail($item['product_id']);
+                    // to prevent incorrect stock updates from simultaneous sales
+                    $stock = Stock::where('product_id',$product->id)
                     ->lockForUpdate()
                     ->first();
-
-
-
+                     // Check whether stock exists and available quantity is greater than zero
                     if (!$stock || $stock->quantity <= 0) {
-
-                        throw new \Exception(
-                            'Cannot do sale. Stock is zero for product: '
-                            .$product->name
-                        );
-
+                        throw new \Exception('Cannot do sale. Stock is zero for product: '.$product->name);
                     }
-
-
-
+                     // Validate whether sufficient stock is available for the requested quantity
                     if ($stock->quantity < $item['quantity']) {
-
-                        throw new \Exception(
-                            'Not enough stock for product: '
-                            .$product->name
-                        );
-
+                        throw new \Exception('Not enough stock for product: '.$product->name);
                     }
-
-
-
+                    // Ensure that a valid selling price is available
                     if (!$product->unit_price || $product->unit_price <= 0) {
-                        throw new \Exception(
-                            'Cannot do sale. Unit price is not set for product: '
-                            .$product->name
-                        );
+                        throw new \Exception('Cannot do sale. Unit price is not set for product: '.$product->name);
                     }
-
+                     // Retrieve the product selling price
                     $unitPrice = $product->unit_price;
-
-                    $lineTotal =
-                        $unitPrice * $item['quantity'];
-
-
-
+                      // Calculate the total price for the current sale item
+                    $lineTotal = $unitPrice * $item['quantity'];
+                    // Add item total to the overall sale amount
                     $grandTotal += $lineTotal;
 
-
-
                     // Create sale item
-
                     $sale->items()->create([
-
                         'product_id' => $product->id,
-
                         'quantity' => $item['quantity'],
-
                         'unit_price' => $unitPrice,
-
                         'total_price' => $lineTotal,
-
                     ]);
 
-
-
-
                     // Reduce stock
-
-                    $stock->decrement(
-                        'quantity',
-                        $item['quantity']
-                    );
+                    $stock->decrement('quantity',$item['quantity']);
 
 
 
