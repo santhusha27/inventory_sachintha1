@@ -130,7 +130,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
         Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
         Route::get('/purchases/{id}/grn', [PurchaseController::class, 'show'])->name('purchases.grn');
-        Route::post('/purchases/{id}/email-grn', [PurchaseController::class, 'emailGrn'])->name('purchases.emailGrn');
+        //Route::post('/purchases/{id}/email-grn', [PurchaseController::class, 'emailGrn'])->name('purchases.emailGrn');
         Route::delete('/purchases/{id}', [PurchaseController::class, 'destroy'])->name('purchases.destroy');
     });
     // Sales (Stock OUT)
@@ -142,12 +142,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/sales/{id}/invoice-pdf', [SaleController::class, 'invoicePdf'])->name('sales.invoicePdf');
     });
     
-
+    Route::middleware('role:admin')->group(function () {
         // Main Reports Page
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         // Custom Date Sales Report
         Route::get('/reports/custom', [ReportController::class, 'custom'])->name('reports.custom');
-
+    });
+        //notification
         Route::delete('/notifications/{id}', function ($id) {
 
                 auth()->user()
@@ -160,7 +161,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ]);
 
             })->middleware('auth');
-
+    
 });
 
     

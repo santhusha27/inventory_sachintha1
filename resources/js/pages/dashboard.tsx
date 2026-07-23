@@ -165,7 +165,7 @@ export default function Dashboard() {
                 }}
             >
                 {/* Dark Overlay */}
-                <div className="relative min-h-screen bg-black/65 backdrop-blur-[1px]">
+                <div className="relative min-h-screen backdrop-blur-[1px]">
                     <div className="pointer-events-none absolute inset-0 overflow-hidden">
                         <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-orange-500/20 blur-3xl"></div>
 
@@ -177,7 +177,7 @@ export default function Dashboard() {
                             Welcome, {auth.user.name}
                         </h1>
 
-                        <p className="mt-2 text-gray-300">
+                        <p className="mt-2 text-white">
                             Sachintha Book Shop Inventory & Sales Management
                             System
                         </p>

@@ -69,8 +69,7 @@ export default function Welcome() {
                             <p className="mt-8 max-w-xl text-lg leading-8 text-gray-300">
                                 Efficiently manage products, suppliers,
                                 inventory, purchases, sales, invoices and
-                                reports through one modern web application
-                                developed using Laravel, React and Inertia.js.
+                                reports through one modern web application.
                             </p>
 
                             <div className="mt-12 flex flex-wrap gap-5">
